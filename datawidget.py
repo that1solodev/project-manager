@@ -4,13 +4,14 @@ from tabulate import tabulate
 def add_project(val):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute("INSERT INTO project (Client_name, Project_desc, Total_amount, Start_date, End_date)VALUES (?,?,?,?,?)", val)
+    c.execute("INSERT INTO project (Client_name, Project_desc, Total_amount, Start_date, End_date) VALUES (?,?,?,?,?)", val)
     conn.commit()
     conn.close()
     
-def add_transaction():
+def add_transaction(val):
     conn = sqlite3.connect('database.db')
-    #c = conn.cursor()
+    c = conn.cursor()
+    c.execute("INSERT INTO transactions VALUES (?,?,?,?)", val)
     conn.commit()
     conn.close()
 
@@ -52,11 +53,26 @@ def search_transaction(prj_id):
 def search_project(prj_id):
     conn = sqlite3.connect('database.db')
     c=conn.cursor()
-    c.execute("SELECT * FROM project WHERE ProjectID = (?)",str(prj_id))
+    c.execute("SELECT * FROM project WHERE ProjectID = (?)",(str(prj_id),))
     project_list = c.fetchall()
     if len(project_list) == 0:
         print("No entries found. Invalid ProjectID.")
     print(tabulate(project_list, headers = ['ProjectID', 'Client_name','Project_Description','Total_Amount','Start_Date', 'End_Date'], tablefmt='fancy_grid'))
     conn.commit()
     conn.close()
+
+def id_in_projectlist(prj_id):
+    conn = sqlite3.connect("database.db")
+    c= conn.cursor()
+    c.execute("SELECT * FROM project WHERE ProjectID = (?)",(str(prj_id),))
+    project_list = c.fetchall()
+    if len(project_list) == 0:
+        conn.commit()
+        conn.close()
+        return False
+    else:
+        conn.commit()
+        conn.close()
+        return True
+    
 

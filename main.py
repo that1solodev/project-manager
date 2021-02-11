@@ -53,6 +53,15 @@ if __name__ == '__main__':
                 end_date = input("Enter End data(YYYY-MM-DD): ")
                 datawidget.add_project((cl_name, prj_desc, tot_amt, start_date, end_date))
             else:
-                print(ans)
+                prj_id = input("Enter ProjectID: ")
+                id_bool = datawidget.id_in_projectlist(prj_id)
+                if id_bool is True:
+                    trn_id = input("Transaction ID: ")
+                    amt = float(input("Amount: "))
+                    trn_date = input("Enter Transaction date(YYYY-MM-DD): ")
+                    datawidget.add_transaction((prj_id, trn_id, amt, trn_date))
+                else:
+                    print("ProjectID not found!")
+        
         elif res == 'Exit':
             break
