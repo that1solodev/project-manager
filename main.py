@@ -33,7 +33,7 @@ if __name__ == '__main__':
             if len(all_trn) > 2:
                 for each_trn in all_trn[2:]:
                     print(Fore.WHITE+each_trn)
-        elif res == 'Add new':
+        elif res == 'Add new':  #Add new project or transaction
             add_new_questions = [{
                 'type':'list',
                 'name':'inner_new',
@@ -53,7 +53,7 @@ if __name__ == '__main__':
                 end_date = input("Enter End data(YYYY-MM-DD): ")
                 datawidget.add_project((cl_name, prj_desc, tot_amt, start_date, end_date))
             else:
-                prj_id = input("Enter ProjectID: ")
+                prj_id = input("ProjectID: ")
                 id_bool = datawidget.id_in_projectlist(prj_id)
                 if id_bool is True:
                     trn_id = input("Transaction ID: ")
@@ -62,6 +62,166 @@ if __name__ == '__main__':
                     datawidget.add_transaction((prj_id, trn_id, amt, trn_date))
                 else:
                     print("ProjectID not found!")
-        
+        elif res == 'Search':
+            months = {
+                'jan':'01',
+                'feb':'02',
+                'mar':'03',
+                'apr':'04',
+                'may':'05',
+                'jun':'06',
+                'jul':'07',
+                'aug':'08',
+                'sep':'09',
+                'oct':'10',
+                'nov':'11',
+                'dec':'12'
+            }
+            search_questions = [{
+                'type':'list',
+                'name':'inner_search',
+                'message':'Search: ',
+                'choices':['Project', 'Transaction']
+            }]
+            ans = prompt(search_questions)['inner_search']
+            system('cls')
+            print("Search:", end = ' ')
+            print(Fore.YELLOW+ans)
+            print(Fore.WHITE)
+            if ans == 'Project':
+                search_questions = [{
+                'type':'list',
+                'name':'filter_search',
+                'message':'Filter: ',
+                'choices':['ProjectID', 'Start_Date', 'End_Date']
+                }]
+                ans2 = prompt(search_questions)['filter_search']
+                system('cls')
+                print("Search:", end = ' ')
+                print(Fore.YELLOW+ans)
+                print(Fore.WHITE)
+                print("Filter:", end = ' ')
+                print(Fore.YELLOW+ans2)
+                print(Fore.WHITE)
+                if ans2 == 'ProjectID':
+                    prj_id = input("ProjectID: ")
+                    prj_data = datawidget.search_project(ans2,prj_id).split("\n")
+                    if len(prj_data) == 1:
+                        print(Fore.RED+prj_data[0])
+                        print(Fore.WHITE)
+                    else:
+                        print(Fore.WHITE+prj_data[0])
+                        print(Fore.CYAN+prj_data[1])
+                        for each_prj in prj_data[2:]:
+                            print(Fore.WHITE+each_prj)
+                elif ans2 == 'Start_Date':
+                    yorm = input("Search by Year or Month(y or m):").lower()
+                    if yorm == 'y':
+                        year = input("Enter year(YYYY): ")
+                        prj_data = datawidget.search_project(ans2,('Y', year)).split("\n")
+                        if len(prj_data) == 1:
+                            print(Fore.RED+prj_data[0])
+                            print(Fore.WHITE)
+                        else:
+                            print(Fore.WHITE+prj_data[0])
+                            print(Fore.CYAN+prj_data[1])
+                            for each_prj in prj_data[2:]:
+                                print(Fore.WHITE+each_prj)
+                    elif yorm == 'm':
+                        month = input("Enter month(mmm in text): ")
+                        prj_data = datawidget.search_project(ans2,('m',months[month])).split("\n")
+                        if len(prj_data) == 1:
+                            print(Fore.RED+prj_data[0])
+                            print(Fore.WHITE)
+                        else:
+                            print(Fore.WHITE+prj_data[0])
+                            print(Fore.CYAN+prj_data[1])
+                            for each_prj in prj_data[2:]:
+                                print(Fore.WHITE+each_prj)  
+                else:
+                    yorm = input("Search by Year or Month(y or m):").lower()
+                    if yorm == 'y':
+                        year = input("Enter year(YYYY): ")
+                        prj_data = datawidget.search_project(ans2,('Y', year)).split("\n")
+                        if len(prj_data) == 1:
+                            print(Fore.RED+prj_data[0])
+                            print(Fore.WHITE)
+                        else:
+                            print(Fore.WHITE+prj_data[0])
+                            print(Fore.CYAN+prj_data[1])
+                            for each_prj in prj_data[2:]:
+                                print(Fore.WHITE+each_prj)
+                    elif yorm == 'm':
+                        month = input("Enter month(mmm in text): ")
+                        prj_data = datawidget.search_project(ans2,('m',months[month])).split("\n")
+                        if len(prj_data) == 1:
+                            print(Fore.RED+prj_data[0])
+                            print(Fore.WHITE)
+                        else:
+                            print(Fore.WHITE+prj_data[0])
+                            print(Fore.CYAN+prj_data[1])
+                            for each_prj in prj_data[2:]:
+                                print(Fore.WHITE+each_prj)   
+            else:
+                search_questions = [{
+                'type':'list',
+                'name':'filter_search',
+                'message':'Filter: ',
+                'choices':['ProjectID', 'TransactionID', 'Transaction_Date']
+                }]
+                ans2 = prompt(search_questions)['filter_search']
+                system('cls')
+                print("Search:", end = ' ')
+                print(Fore.YELLOW+ans)
+                print(Fore.WHITE)
+                print("Filter:", end = ' ')
+                print(Fore.YELLOW+ans2)
+                print(Fore.WHITE)
+                if ans2 == 'ProjectID':
+                    prj_id = input("ProjectID: ")
+                    prj_data = datawidget.search_transaction(ans2,prj_id).split("\n")
+                    if len(prj_data) == 1:
+                        print(Fore.RED+prj_data[0])
+                        print(Fore.WHITE)
+                    else:
+                        print(Fore.WHITE+prj_data[0])
+                        print(Fore.CYAN+prj_data[1])
+                        for each_prj in prj_data[2:]:
+                            print(Fore.WHITE+each_prj)
+                elif ans2 == 'TransactionID':
+                    trn_id = input("TransactionID: ")
+                    prj_data = datawidget.search_transaction(ans2,trn_id).split("\n")
+                    if len(prj_data) == 1:
+                        print(Fore.RED+prj_data[0])
+                        print(Fore.WHITE)
+                    else:
+                        print(Fore.WHITE+prj_data[0])
+                        print(Fore.CYAN+prj_data[1])
+                        for each_prj in prj_data[2:]:
+                            print(Fore.WHITE+each_prj)
+                else:
+                    yorm = input("Search by Year or Month(y or m):").lower()
+                    if yorm == 'y':
+                        year = input("Enter year(YYYY): ")
+                        prj_data = datawidget.search_transaction(ans2,('Y', year)).split("\n")
+                        if len(prj_data) == 1:
+                            print(Fore.RED+prj_data[0])
+                            print(Fore.WHITE)
+                        else:
+                            print(Fore.WHITE+prj_data[0])
+                            print(Fore.CYAN+prj_data[1])
+                            for each_prj in prj_data[2:]:
+                                print(Fore.WHITE+each_prj)
+                    elif yorm == 'm':
+                        month = input("Enter month(mmm in text): ")
+                        prj_data = datawidget.search_transaction(ans2,('m',months[month])).split("\n")
+                        if len(prj_data) == 1:
+                            print(Fore.RED+prj_data[0])
+                            print(Fore.WHITE)
+                        else:
+                            print(Fore.WHITE+prj_data[0])
+                            print(Fore.CYAN+prj_data[1])
+                            for each_prj in prj_data[2:]:
+                                print(Fore.WHITE+each_prj)              
         elif res == 'Exit':
             break

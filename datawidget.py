@@ -34,32 +34,46 @@ def view_all_transactions():
     return tabulate(transaction_list, headers = ['ProjectID','TransactionID','Amount(Rs.)','Transaction_Date'], tablefmt='fancy_grid', stralign='left', numalign='center')
     
 
-def search_transaction(prj_id):
+def search_transaction(filter, value):
     conn = sqlite3.connect('database.db')
     c=conn.cursor()
-    c.execute("SELECT * FROM transactions WHERE ProjectID = (?)",str(prj_id))
+    c.execute("SELECT * FROM transactions WHERE ProjectID = (?)",str(value,))
     transaction_list = c.fetchall()
     new_tranlist = []
     for t in transaction_list:
         new_tranlist.append([i for i in t[1:]]) 
     if len(transaction_list) == 0:
-        print("No entries found. Invalid ProjectID.")
+        print("No entries found!")
     else:
-        print("ProjectID: ",prj_id)
+        print("ProjectID: ",value)
         print(tabulate(transaction_list, headers = ['TransactionID','Amount(Rs.)','Transaction_Date'], tablefmt='fancy_grid'))
     conn.commit()
     conn.close()
 
-def search_project(prj_id):
+def search_project(filter, value):
     conn = sqlite3.connect('database.db')
     c=conn.cursor()
-    c.execute("SELECT * FROM project WHERE ProjectID = (?)",(str(prj_id),))
+    if filter == 'ProjectID':
+        c.execute("SELECT * FROM project WHERE ProjectID = (?)",(str(value),))
+    elif filter == 'Start_Date':
+        if value[0] == 'Y':
+            c.execute("SELECT * FROM project WHERE strftime('%Y', Start_Date) = ?",(str(value[1]),))
+        else:
+            c.execute("SELECT * FROM project WHERE strftime('%m',Start_Date) = ?", (str(value[1]),))
+    else:
+        if value[0] == 'Y':
+            c.execute("SELECT * FROM project WHERE strftime('%Y', End_Date) = ?",(str(value[1]),))
+        else:
+            c.execute("SELECT * FROM project WHERE strftime('%m',End_Date) = ?", (str(value[1]),))
     project_list = c.fetchall()
     if len(project_list) == 0:
-        print("No entries found. Invalid ProjectID.")
-    print(tabulate(project_list, headers = ['ProjectID', 'Client_name','Project_Description','Total_Amount','Start_Date', 'End_Date'], tablefmt='fancy_grid'))
+        conn.commit()
+        conn.close()
+        return 'No entries found!'
     conn.commit()
     conn.close()
+    return tabulate(project_list, headers = ['ProjectID', 'Client_name','Project_Description','Total_Amount','Start_Date', 'End_Date'], tablefmt='fancy_grid')
+    
 
 def id_in_projectlist(prj_id):
     conn = sqlite3.connect("database.db")
