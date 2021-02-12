@@ -37,18 +37,24 @@ def view_all_transactions():
 def search_transaction(filter, value):
     conn = sqlite3.connect('database.db')
     c=conn.cursor()
-    c.execute("SELECT * FROM transactions WHERE ProjectID = (?)",str(value,))
-    transaction_list = c.fetchall()
-    new_tranlist = []
-    for t in transaction_list:
-        new_tranlist.append([i for i in t[1:]]) 
-    if len(transaction_list) == 0:
-        print("No entries found!")
+    if filter == 'ProjectID':
+        c.execute("SELECT * FROM transactions WHERE ProjectID = (?)", (str(value),))
+    elif filter == 'TransactionID':
+        c.execute("SELECT * FROM transactions WHERE TransactionID = (?)", (str(value),))
     else:
-        print("ProjectID: ",value)
-        print(tabulate(transaction_list, headers = ['TransactionID','Amount(Rs.)','Transaction_Date'], tablefmt='fancy_grid'))
+        if value[0] == 'Y':
+            c.execute("SELECT * FROM transactions WHERE strftime('%Y', Transaction_Date) = ?",(str(value[1]),))
+        else:
+            c.execute("SELECT * FROM transactions WHERE strftime('%m',Transaction_Date) = ?", (str(value[1]),))
+    transaction_list = c.fetchall()
+    if len(transaction_list) == 0:
+        conn.commit()
+        conn.close()
+        return 'No entries found!'
     conn.commit()
     conn.close()
+    return tabulate(transaction_list, headers = ['ProjectID','TransactionID','Amount(Rs.)','Transaction_Date'], tablefmt='fancy_grid')
+
 
 def search_project(filter, value):
     conn = sqlite3.connect('database.db')
